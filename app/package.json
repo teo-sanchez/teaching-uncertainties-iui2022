@@ -1,0 +1,63 @@
+{
+  "name": "uncertainty-guidance",
+  "description": "A Marcelle Application",
+  "version": "0.0.0",
+  "main": "./dist/bundle.js",
+  "keywords": [
+    "marcelle"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "piptouque",
+    "email": "piptouque@protonmail.com"
+  },
+  "scripts": {
+    "backend-marcelle": "marcelle-backend",
+    "backend-python": "python3 -m python.server",
+    "backend": "npm run backend-marcelle & npm run backend-python",
+    "dev-client": "cross-env NODE_ENV=development webpack serve --content-base dist",
+    "dev-server": "npm run backend",
+    "dev": "npm run dev-server & npm run dev-client",
+    "build": "cross-env NODE_ENV=production webpack",
+    "dev-client-camera": "sh ./scripts/virtual_camera.sh"
+  },
+  "dependencies": {
+    "@feathersjs/feathers": "^4.5.11",
+    "@marcellejs/backend": "^0.0.4",
+    "@marcellejs/core": "git+https://github.com/piptouque/marcelle.git#develop_pip_main",
+    "cholesky-tools": "^0.1.7",
+    "image-js": "^0.31.4",
+    "mathjs": "^9.4.4",
+    "socket.io-client": "^4.1.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
+    "browserify": "^17.0.0",
+    "cross-env": "^7.0.2",
+    "css-loader": "^5.0.1",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-svelte3": "^3.2.0",
+    "html-webpack-plugin": "^5.3.2",
+    "mini-css-extract-plugin": "^1.2.1",
+    "node-polyfill-webpack-plugin": "^1.1.3",
+    "prettier": "^2.2.0",
+    "serve": "^11.3.2",
+    "style-loader": "^2.0.0",
+    "svelte": "~3.39.0",
+    "svelte-check": "^2.2.0",
+    "svelte-hmr": "0.14.5",
+    "svelte-loader": "^3.1.2",
+    "svelte-preprocess": "^4.7.3",
+    "svelte-range-slider-pips": "^1.7.0",
+    "ts-loader": "^8.0.9",
+    "typescript": "^4.0.5",
+    "webpack": "^5.41.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-import-glob-loader": "1.6.3"
+  }
+}
