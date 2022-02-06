@@ -1,0 +1,158 @@
+{
+    "misc": {
+        "author": {
+            "name": "ISIR HCI"
+        },
+        "dashboards": {
+            "home": {
+                "name": "Bienvenue"
+            },
+            "a": {
+                "name": "Incertitude en IML (A)"
+            },
+            "b": {
+                "name": "Incertitude en IML (B)"
+            }
+        },
+        "pages": {
+            "home": {
+                "name": "Bienvenue"
+            },
+            "introduction": {
+                "name": "Intro"
+            },
+            "instructions": {
+                "name": "Instructions"
+            },
+            "trial": {
+                "name": "Essai"
+            },
+            "teaching": {
+                "name": "Enseignement"
+            },
+            "exploration": {
+                "name": "Exploration"
+            },
+            "user_test_accuracy": {
+                "name": "Test précision"
+            },
+            "user_test_uncertainty": {
+                "name": "Test incertitude"
+            },
+            "survey": {
+                "name": "Questionnaire"
+            },
+            "break": {
+                "name": "Pause"
+            },
+            "debriefing": {
+                "name": "Fin"
+            },
+            "debug": {
+                "name": "Débogage"
+            }
+        },
+        "uncertainty_names": {
+            "aleatoric": "Incertitude A",
+            "epistemic": "Incertitude B"
+        },
+        "uncertainty_values": {
+            "aleatoric": {
+                "high": "Très incertain",
+                "low": "Certain"
+            },
+            "epistemic": {
+                "high": "Très incertain",
+                "low": "Certain"
+            }
+        },
+        "label_names": {
+            "Neuf": "Neuf",
+            "Dame": "Dame",
+            "Roi": "Roi"
+        },
+        "notifications": {
+            "error": {
+                "title": "Erreur"
+            },
+            "save": {
+                "title": "Enregistrement",
+                "description": "Effectué"
+            }
+        }
+    },
+    "home": {
+        "condition_title": "Condition",
+        "iteration_title": "Itération",
+        "id_title": "Identifiant",
+        "button_text": "Confirmer",
+        "error": {
+            "participant_id": {
+                "text": "Identifiant de participant invalide !"
+            } 
+        }
+    },
+    "instructions": {
+        "primer_video_title": "Vidéo d'introduction",
+        "interface_video_title": "Vidéo d'instruction"
+    },
+    "trial":{
+        "webcam_title": "Caméra",
+        "snapshot_title": "Étiquette",
+        "training_set_title": "Images d'entraînement",
+        "label_title": "Classe",
+        "uncertainty_title": "Incertitude",
+        "train_title": "Entraînement",
+        "training_progress_title": "État d'entraînement",
+        "prediction_pending_text": "En attente de la fin de l'entraînement",
+        "timer_title": "Temps",
+        "timer_button_title": "Temps",
+        "timer_button_text": "Lancer"
+    },
+    "teaching": {
+        "webcam_title": "Caméra",
+        "snapshot_title": "Étiquette",
+        "training_set_title": "Images d'entraînement",
+        "label_title": "Classe",
+        "uncertainty_title": "Incertitude",
+        "train_title": "Entraînement",
+        "training_progress_title": "État d'entraînement",
+        "prediction_pending_text": "En attente de la fin de l'entraînement",
+        "timer_title": "Temps",
+        "timer_button_title": "Temps",
+        "timer_button_text": "Lancer",
+        "error": {
+            "max_count": {
+                "text": "Vous ne pouvez pas ajouter d'exemples supplémentaires !"
+            } 
+        }
+    },
+    "user_test": {
+        "accuracy_title": "Mon classifieur va-t-il réussir à reconnaître cette image?",
+        "label_names": {
+            "yes": "Oui, il va réussir.",
+            "no": "Non, il ne va pas réussir.",
+            "dont_know": "Je ne sais pas."
+        },
+        "index_title": "Progression",
+        "uncertainty_title": "Estimez l'incertitude de votre classifieur sur cette image.",
+        "answer_title": "Réponse",
+        "answer_button_text": "Valider la réponse",
+        "display_title": "Image",
+        "back_button_text": "Retour",
+        "back_button_title": "Retour",
+        "error": {
+            "answer": {
+                "text": "Vous devez sélectionner une réponse !"
+            } 
+        }
+    },
+    "debriefing": {
+        "result_accuracy_title": "Résultats de précision",
+        "result_uncertainty_title": "Résultats d'incertitude"
+    },
+    "debug": {
+        "debug_title": "Débogage",
+        "train_button_text": "Entraîner l'algorithme"
+    }
+}

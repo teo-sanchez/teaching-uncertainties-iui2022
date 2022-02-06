@@ -8,7 +8,6 @@ import json
 import glob
 import itertools
 from types import SimpleNamespace
-
 import random
 import pandas as pd
 import PIL
@@ -90,9 +89,9 @@ class Mapping:
 class Study:
     @staticmethod
     def  import_demography():
-        res = pd.DataFrame(columns = ["Genre", "Age", "Field", "Expertise-CS", "Expertise-ML",  "Reason-participation", "Involvement"])
+        res = pd.DataFrame(columns = ["Genre", "Age", "Field", "Expertise-CS", "Expertise-ML"])
         for i in range(1, 17):
-            res.loc[i] = [np.NaN] * 7
+            res.loc[i] = [np.NaN] * 5
         res["Genre"] = ["F", "F", "F", "M", "F", "M", "M", "M", "F", "F", "F", "F", "F", "M", "F", "F"]
         res["Age"] = [30, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18]
         res["Field"] = ["Sociology", "Phisolophy", "Linguistic", "Math", "Design", "Design", "Design", "Design", "Biology", "Economics", "Biology", "Biology", "Biology","Chemistry", "Biology", "Biology"]
@@ -293,11 +292,11 @@ class Study:
     def getStrategiesStudy() -> pd.DataFrame:
         """[summary]
         """
-        strategies = pd.DataFrame(columns = ["uncertainty_as_guidance", "systematic", "disorganized", "exhaustive", "exclusive"])
+        strategies = pd.DataFrame(columns = ["uncertainty_as_guidance", "systematic"])
         for p in range(1,17):
             for c in ["A","B"]:
                 row_index = str(p)+c
-                strategies.loc[row_index] = [0.] * 5
+                strategies.loc[row_index] = [0.] * 2
         
         for p in ["2A", "7B"]:
             strategies.loc[p]["uncertainty_as_guidance"] = 1.
@@ -308,13 +307,13 @@ class Study:
         # for p in ["6A", "7B", "8A","8B", "9A", "12A", "13B", "14B", "15B", "16A"]:
         for p in ["4B", "6A", "6B", "7B", "8A"]:
             strategies.loc[p]["systematic"] = 1.
-        for p in ["2A", "7B", "8B", "9B", "15A", "15B"]:
-            strategies.loc[p]["disorganized"] = 1.
-        for p in ["6A", "7B", "8A","8B", "9A", "12A", "13B", "14B", "15B", "16A"]:
+        # for p in ["2A", "7B", "8B", "9B", "15A", "15B"]:
+        #     strategies.loc[p]["disorganized"] = 1.
+        # for p in ["6A", "7B", "8A","8B", "9A", "12A", "13B", "14B", "15B", "16A"]:
         
-            strategies.loc[p]["exhaustive"] = 1.
-        for p in ["6A", "6B", "15A"]:
-            strategies.loc[p]["exclusive"] = 1.
+        #     strategies.loc[p]["exhaustive"] = 1.
+        # for p in ["6A", "6B", "15A"]:
+        #     strategies.loc[p]["exclusive"] = 1.
         return strategies
     
     @staticmethod
@@ -850,7 +849,7 @@ class Data():
         return train, test, uncertain
 
     @classmethod
-    def get_dataset(cls, filepath: str = "data/card_data.pkl") -> tuple:
+    def get_dataset(cls, filepath: str = "data/card_data.pkl", seed: int = 0) -> tuple:
         """ Load the data from a pickle file
 
         Args:
@@ -867,7 +866,7 @@ class Data():
             [i for i in raw_data_df["class_label"].tolist() if i != None]))))
         # print("Feature size in the ensemble:", raw_data_df["z_ensemble"][0][0].shape, raw_data_df["z_ensemble"][0][1].shape,raw_data_df["z_ensemble"][0][2].shape,)
         train, test, uncertain = cls.split_data(
-            raw_data_df, n_images_train=160, n_images_test=200, n_images_uncertain=240)
+            raw_data_df, n_images_train=160, n_images_test=200, n_images_uncertain=240, seed = seed)
         print("Training set size: ", len(train))
         print("Testing set size: ", len(test))
         print("Uncertain pool size: ", len(uncertain))

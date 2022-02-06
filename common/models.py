@@ -20,30 +20,6 @@ from .utilities import Data
 import pdb
 stop = pdb.set_trace
 
-import json
-import torch
-import argparse
-from torch import optim
-import torch.backends.cudnn as cudnn
-
-# Import dataloaders
-import DDU.data.ood_detection.cifar10 as cifar10
-import DDU.data.ood_detection.cifar100 as cifar100
-import DDU.data.ood_detection.svhn as svhn
-import DDU.data.dirty_mnist as dirty_mnist
-
-# Import network models
-from .net.lenet import lenet
-from .net.resnet import resnet18, resnet50
-from .net.wide_resnet import wrn
-from .net.vgg import vgg16
-
-# Import train and validation utilities
-from .utils.args import training_args
-from .utils.eval_utils import get_eval_stats
-from .utils.train_utils import model_save_name
-from .utils.train_utils import train_single_epoch, test_single_epoch
-
 class Mukhoti():
     """[summary]
 

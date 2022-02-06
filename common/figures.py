@@ -450,7 +450,8 @@ class Figures():
             uncertainties (pd.DataFrame): [description]
             figsize (tuple, optional): [description]. Defaults to (25,10).
         """
-        mapping = {"GaussianKernel-MobileNetV1": "Gaussian Kernel", "DeepEnsemble-MobileNetV1-epochs=10 aleatoric entropy": "MLP Ensemble + entropy"}
+        mapping = {"GaussianKernel-MobileNetV1": "Gaussian Kernel with MobileNetV1", "DeepEnsemble-MobileNetV1-epochs=10 aleatoric entropy": "MLP Ensemble + entropy with MobileNetV1",
+                   "GaussianKernel-ResNet50": "Gaussian Kernel with ResNet50", "GMM-ResNet50": "GMM with ResNet50", "DeepEnsemble-ResNet50-epochs=10 epistemic std": "MLP Ensemble + std on ResNet50"}
         import matplotlib
         matplotlib.use('cairo')
         import matplotlib.pylab as pylab
@@ -604,8 +605,117 @@ class Figures():
         plt.title("Prediction error on the uncertainty estimation on new images")
         sns.despine(trim=True, left=True)
         
+    @staticmethod
+    def save_embedding_accuracies():
+        embeddings_accuracies = pd.DataFrame(columns = ["Dataset", "Embedding", "Classifier", "Accuracy"])
         
-    
+        
+        # CF results benchmark on MNIST + CARDS
+        embeddings_accuracies.loc[0] = ["MNIST", "MobileNetV1", "GMM", 0.095]
+        embeddings_accuracies.loc[1] = ["MNIST", "MobileNetV2", "GMM", 0.135]
+        embeddings_accuracies.loc[2] = ["MNIST", "ResNet50", "GMM", 0.145]
+        embeddings_accuracies.loc[4] = ["MNIST", "MobileNetV1", "MLP", 0.305]
+        embeddings_accuracies.loc[6] = ["MNIST", "MobileNetV2", "MLP", 0.255]
+        embeddings_accuracies.loc[8] = ["MNIST", "ResNet50", "MLP", 0.685]
+
+        embeddings_accuracies.loc[9] = ["Playing cards", "MobileNetV1", "GMM", 0.333]
+        embeddings_accuracies.loc[10] = ["Playing cards", "MobileNetV2", "GMM", 0.593]
+        embeddings_accuracies.loc[11] = ["Playing cards", "ResNet50", "GMM", 0.354]
+        embeddings_accuracies.loc[13] = ["Playing cards", "MobileNetV1", "MLP", 0.920]
+        embeddings_accuracies.loc[15] = ["Playing cards", "MobileNetV2", "MLP", 0.933]
+        embeddings_accuracies.loc[17] = ["Playing cards", "ResNet50", "MLP", 0.886]
+
+
+        import seaborn as sns
+        sns.set_theme(style="whitegrid")
+        fig = plt.figure(figsize=(10,15))
+        g = sns.catplot(x="Classifier", y="Accuracy",
+
+                        hue="Embedding", col="Dataset",
+
+                        data=embeddings_accuracies, kind="bar",
+
+                        height=4, aspect=.7, legend= True, legend_out = False, palette=sns.color_palette("colorblind"))
+        g.set(ylim=(0, 1))
+        # plt.tight_layout()
+        fig.savefig("../../figures_paper/embedding_accuracy.pdf")
+        return fig
+        
+    @staticmethod
+    def save_uncertain_instances_paper():
+        strat_name_1 = "GaussianKernel-MobileNetV1"
+        strat_name_2 = "DeepEnsemble-MobileNetV1-epochs=10 aleatoric entropy"
+        if strat_name_1 not in ["GroundTruth", "UncertaintyLabel", "Images"]:
+            fig1 = Figures.display_most_uncertain_images(uncertainty_scaled, strat_name_1, nb_images = 10, nb_columns = 5)
+            fig1.savefig("../../figures_paper/benchmark_model_uncertainty.pdf", bbox_inches = "tight")
+            
+        if strat_name_2 not in ["GroundTruth", "UncertaintyLabel", "Images"]:
+            fig2 = Figures.display_most_uncertain_images(uncertainty_scaled, strat_name_2, nb_images = 10, nb_columns = 5)
+            fig2.savefig("../../figures_paper/benchmark_data_uncertainty.pdf", bbox_inches = "tight")
+            fname = open("images/{0}_{1}".format(strat_name, "uncertain.png"), "wb")
+            fig.savefig(fname)
+                
+            
+    @staticmethod
+    def save_auroc_paper():
+        AUROC = pd.DataFrame(columns=["Dataset", "Type of uncertainty", "Embedding", "Model", "Acquisition  function", "AUROC"])
+        
+        #CHECK benchmark values
+        AUROC.loc[0] = ["MNIST", "Model uncertainty", "MobileNetV1", "GMM",  "Log-Likelihood", 0.497]
+        AUROC.loc[1] = ["MNIST", "Model uncertainty", "MobileNetV1", "Gaussian Kernel",  "Density estimation", 0.784]
+        AUROC.loc[2] = ["MNIST", "Model uncertainty", "MobileNetV2", "GMM",  "Log-Likelihood", 0.524]
+        AUROC.loc[3] = ["MNIST", "Model uncertainty", "MobileNetV2", "Gaussian Kernel",  "Density estimation", 0.514]
+        AUROC.loc[4] = ["MNIST", "Model uncertainty", "ResNet50", "GMM",  "Log-Likelihood", 0.980]
+        AUROC.loc[5] = ["MNIST", "Model uncertainty", "ResNet50", "Gaussian Kernel",  "Density estimation", 0.975]
+
+        AUROC.loc[6] = ["MNIST", "Data uncertainty", "MobileNetV1", "MLP Ensemble",  "Shannon entropy", 0.690]
+        AUROC.loc[7] = ["MNIST", "Model uncertainty", "MobileNetV1", "MLP Ensemble + std",  "Standard deviation", 0.595]
+        AUROC.loc[8] = ["MNIST", "Data uncertainty", "MobileNetV1", "Simple MLP",  "Shannon entropy", 0.761]
+
+        AUROC.loc[9] = ["MNIST", "Data uncertainty", "MobileNetV2", "MLP Ensemble",  "Shannon entropy", 0.619]
+        AUROC.loc[10] = ["MNIST", "Model uncertainty", "MobileNetV2", "MLP Ensemble + std",  "Standard deviation", 0.494]
+        AUROC.loc[11] = ["MNIST", "Data uncertainty", "MobileNetV2", "Simple MLP",  "Shannon entropy", 0.536]
+
+        AUROC.loc[12] = ["MNIST", "Data uncertainty", "ResNet50", "MLP Ensemble",  "Shannon entropy", 0.561]
+        AUROC.loc[13] = ["MNIST", "Model uncertainty", "ResNet50", "MLP Ensemble + std",  "Standard deviation", 0.718]
+        AUROC.loc[14] = ["MNIST", "Data uncertainty", "ResNet50", "Simple MLP",  "Shannon entropy", 0.479]
+
+        AUROC.loc[15] = ["Playing cards", "Model uncertainty", "MobileNetV1", "GMM",  "Log-Likelihood", 0.867]
+        AUROC.loc[16] = ["Playing cards", "Model uncertainty", "MobileNetV1", "Gaussian Kernel",  "Density estimation", 0.934]
+        AUROC.loc[17] = ["Playing cards", "Model uncertainty", "MobileNetV2", "GMM",  "Log-Likelihood", 0.830]
+        AUROC.loc[18] = ["Playing cards", "Model uncertainty", "MobileNetV2", "Gaussian Kernel",  "Density estimation", 0.869]
+        AUROC.loc[19] = ["Playing cards", "Model uncertainty", "ResNet50", "GMM",  "Log-Likelihood", 0.628]
+        AUROC.loc[20] = ["Playing cards", "Model uncertainty", "ResNet50", "Gaussian Kernel",  "Density estimation", 0.446]
+
+        AUROC.loc[21] = ["Playing cards", "Data uncertainty", "MobileNetV1", "MLP Ensemble",  "Shannon entropy", 0.801]
+        AUROC.loc[22] = ["Playing cards", "Model uncertainty", "MobileNetV1", "MLP Ensemble + std",  "Standard deviation", 0.810]
+        AUROC.loc[23] = ["Playing cards", "Data uncertainty", "MobileNetV1", "Simple MLP",  "Shannon entropy", 0.687]
+
+        AUROC.loc[24] = ["Playing cards", "Data uncertainty", "MobileNetV2", "MLP Ensemble",  "Shannon entropy", 0.817]
+        AUROC.loc[25] = ["Playing cards", "Model uncertainty", "MobileNetV2", "MLP Ensemble + std",  "Standard deviation", 0.805]
+        AUROC.loc[26] = ["Playing cards", "Data uncertainty", "MobileNetV2", "Simple MLP",  "Shannon entropy", 0.823]
+
+        AUROC.loc[27] = ["Playing cards", "Data uncertainty", "ResNet50", "MLP Ensemble",  "Shannon entropy", 0.800]
+        AUROC.loc[28] = ["Playing cards", "Model uncertainty", "ResNet50", "MLP Ensemble + std",  "Standard deviation", 0.680]
+        AUROC.loc[29] = ["Playing cards", "Data uncertainty", "ResNet50", "Simple MLP",  "Shannon entropy", 0.753]
+
+        AUROC.to_csv("auroc.csv")
+        import seaborn as sns
+
+        sns.set_theme(style="whitegrid")
+        plt.figure(figsize=(15,15))
+        g = sns.catplot(x="Model", y="AUROC",
+
+                        hue="Embedding", col="Dataset",
+
+                        data=AUROC.loc[AUROC["Type of uncertainty"] == "Model uncertainty"], kind="bar",
+
+                        height=4, aspect=.7, legend = False, legend_out = True, palette=sns.color_palette("colorblind"))
+        g.set(ylim=(0, 1))
+        g.set_xticklabels(rotation = 15)
+        return g
+        plt.savefig("../../figures_paper/embedding_detection.pdf", bbox_inches = "tight")
+
     
         
         
