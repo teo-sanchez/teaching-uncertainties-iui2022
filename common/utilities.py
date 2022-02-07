@@ -280,8 +280,8 @@ class Study:
                         # score = 10 * score / len(result) + 10
                         line.append(score)
                     elif phase == "test_uncertainty":
-                        score = np.linalg.norm(np.clip(
-                            data[p][c]["test_uncertainty"]["predicted"].values, 0, 1)-data[p][c]["test_uncertainty"]["answer"].values)
+                        score = 1-np.mean(np.abs(np.clip(
+                            data[p][c]["test_uncertainty"]["predicted"].values, 0, 1)-data[p][c]["test_uncertainty"]["answer"].values))
                         line.append(score)
                     else:
                         line.append(int(list(data[p][c][phase]["deleted"].values).count(False)))

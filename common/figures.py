@@ -657,64 +657,73 @@ class Figures():
                 
             
     @staticmethod
-    def save_auroc_paper():
+    def save_auroc_paper(type_uncertainty: str = "Aleatoric uncertainty"):
+        import pickle
+        auroc_mnist = pickle.load(open("../benchmark/auroc_mnist_b.pkl", "rb"))
+        auroc_cards = pickle.load(open("../benchmark/auroc_cards_b.pkl", "rb"))
         AUROC = pd.DataFrame(columns=["Dataset", "Type of uncertainty", "Embedding", "Model", "Acquisition  function", "AUROC"])
         
-        #CHECK benchmark values
-        AUROC.loc[0] = ["MNIST", "Model uncertainty", "MobileNetV1", "GMM",  "Log-Likelihood", 0.497]
-        AUROC.loc[1] = ["MNIST", "Model uncertainty", "MobileNetV1", "Gaussian Kernel",  "Density estimation", 0.784]
-        AUROC.loc[2] = ["MNIST", "Model uncertainty", "MobileNetV2", "GMM",  "Log-Likelihood", 0.524]
-        AUROC.loc[3] = ["MNIST", "Model uncertainty", "MobileNetV2", "Gaussian Kernel",  "Density estimation", 0.514]
-        AUROC.loc[4] = ["MNIST", "Model uncertainty", "ResNet50", "GMM",  "Log-Likelihood", 0.980]
-        AUROC.loc[5] = ["MNIST", "Model uncertainty", "ResNet50", "Gaussian Kernel",  "Density estimation", 0.975]
+        cpt = 0
+        for k in auroc_mnist["samples"].keys():
+            row = [None]*6
+            if "MobileNetV1" in k:
+                row[2] = "MobileNetV1"
+            elif "MobileNetV2" in k:
+                row[2] = "MobileNetV2"
+            else:
+                row[2] = "ResNet50"
+            if "GMM" in k:
+                row[1] = "Epistemic uncertainty"
+                row[3] = "GMM"
+                row[4] = "Log-Likelihood"
+            elif "Kernel" in k:
+                row[1] = "Epistemic uncertainty"
+                row[3] = "Gaussian Kernel"
+                row[4] = "Density estimation"
+            elif "MLP" in k:
+                row[1] = "Aleatoric uncertainty"
+                row[3] = "Simple MLP"
+                row[4] = "Shannon entropy"                
+                
+            else:
+                if "entropy" in k:
+                    row[1] = "Aleatoric uncertainty"
+                    row[3] = "MLP Ensemble"
+                    row[4] = "Shannon entropy"   
+                else:
+                    row[1] = "Epistemic uncertainty"
+                    row[3] = "MLP Ensemble + std"
+                    row[4] = "Standard deviation"  
+            for sample in auroc_mnist["samples"][k]:
+                row[0] = "MNIST"
+                row[5] = sample
+                AUROC.loc[cpt] = list(row)
+                cpt+=1
+            for sample in auroc_cards["samples"][k]:
+                row[0] = "Playing cards"
+                row[5] = sample
+                AUROC.loc[cpt] = row
+                cpt+=1
 
-        AUROC.loc[6] = ["MNIST", "Data uncertainty", "MobileNetV1", "MLP Ensemble",  "Shannon entropy", 0.690]
-        AUROC.loc[7] = ["MNIST", "Model uncertainty", "MobileNetV1", "MLP Ensemble + std",  "Standard deviation", 0.595]
-        AUROC.loc[8] = ["MNIST", "Data uncertainty", "MobileNetV1", "Simple MLP",  "Shannon entropy", 0.761]
-
-        AUROC.loc[9] = ["MNIST", "Data uncertainty", "MobileNetV2", "MLP Ensemble",  "Shannon entropy", 0.619]
-        AUROC.loc[10] = ["MNIST", "Model uncertainty", "MobileNetV2", "MLP Ensemble + std",  "Standard deviation", 0.494]
-        AUROC.loc[11] = ["MNIST", "Data uncertainty", "MobileNetV2", "Simple MLP",  "Shannon entropy", 0.536]
-
-        AUROC.loc[12] = ["MNIST", "Data uncertainty", "ResNet50", "MLP Ensemble",  "Shannon entropy", 0.561]
-        AUROC.loc[13] = ["MNIST", "Model uncertainty", "ResNet50", "MLP Ensemble + std",  "Standard deviation", 0.718]
-        AUROC.loc[14] = ["MNIST", "Data uncertainty", "ResNet50", "Simple MLP",  "Shannon entropy", 0.479]
-
-        AUROC.loc[15] = ["Playing cards", "Model uncertainty", "MobileNetV1", "GMM",  "Log-Likelihood", 0.867]
-        AUROC.loc[16] = ["Playing cards", "Model uncertainty", "MobileNetV1", "Gaussian Kernel",  "Density estimation", 0.934]
-        AUROC.loc[17] = ["Playing cards", "Model uncertainty", "MobileNetV2", "GMM",  "Log-Likelihood", 0.830]
-        AUROC.loc[18] = ["Playing cards", "Model uncertainty", "MobileNetV2", "Gaussian Kernel",  "Density estimation", 0.869]
-        AUROC.loc[19] = ["Playing cards", "Model uncertainty", "ResNet50", "GMM",  "Log-Likelihood", 0.628]
-        AUROC.loc[20] = ["Playing cards", "Model uncertainty", "ResNet50", "Gaussian Kernel",  "Density estimation", 0.446]
-
-        AUROC.loc[21] = ["Playing cards", "Data uncertainty", "MobileNetV1", "MLP Ensemble",  "Shannon entropy", 0.801]
-        AUROC.loc[22] = ["Playing cards", "Model uncertainty", "MobileNetV1", "MLP Ensemble + std",  "Standard deviation", 0.810]
-        AUROC.loc[23] = ["Playing cards", "Data uncertainty", "MobileNetV1", "Simple MLP",  "Shannon entropy", 0.687]
-
-        AUROC.loc[24] = ["Playing cards", "Data uncertainty", "MobileNetV2", "MLP Ensemble",  "Shannon entropy", 0.817]
-        AUROC.loc[25] = ["Playing cards", "Model uncertainty", "MobileNetV2", "MLP Ensemble + std",  "Standard deviation", 0.805]
-        AUROC.loc[26] = ["Playing cards", "Data uncertainty", "MobileNetV2", "Simple MLP",  "Shannon entropy", 0.823]
-
-        AUROC.loc[27] = ["Playing cards", "Data uncertainty", "ResNet50", "MLP Ensemble",  "Shannon entropy", 0.800]
-        AUROC.loc[28] = ["Playing cards", "Model uncertainty", "ResNet50", "MLP Ensemble + std",  "Standard deviation", 0.680]
-        AUROC.loc[29] = ["Playing cards", "Data uncertainty", "ResNet50", "Simple MLP",  "Shannon entropy", 0.753]
-
-        AUROC.to_csv("auroc.csv")
         import seaborn as sns
 
+        # AUROC[['Model', 'Dataset', 'Embedding', 'Type of uncertainty']] = AUROC[['Model', 'Dataset', 'Embedding', 'Type of uncertainty']].astype("category")
         sns.set_theme(style="whitegrid")
         plt.figure(figsize=(15,15))
         g = sns.catplot(x="Model", y="AUROC",
 
                         hue="Embedding", col="Dataset",
 
-                        data=AUROC.loc[AUROC["Type of uncertainty"] == "Model uncertainty"], kind="bar",
+                        data=AUROC.loc[AUROC["Type of uncertainty"] == type_uncertainty], kind="bar",
 
                         height=4, aspect=.7, legend = False, legend_out = True, palette=sns.color_palette("colorblind"))
         g.set(ylim=(0, 1))
         g.set_xticklabels(rotation = 15)
+        g.axes[0][0].axhline(y = 0.5, color = 'k', linestyle = '--', linewidth = 1)
+        g.axes[0][1].axhline(y = 0.5, color = 'k', linestyle = '--', linewidth = 1)
+
+        plt.savefig("../../figures_paper/embedding_detection_{}.pdf".format(type_uncertainty), bbox_inches = "tight")
         return g
-        plt.savefig("../../figures_paper/embedding_detection.pdf", bbox_inches = "tight")
 
     
         
